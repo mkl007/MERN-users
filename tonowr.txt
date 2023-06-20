@@ -1,0 +1,158 @@
+// We have to run 3 servers.
+
+// 1. mongod
+// 2. Backend (server): cd server => nodemon server.js
+// 3. React Server (npm start)
+
+
+// lo que me interesa por ahora para el proyecto:
+====================================/
+// // server.js
+
+
+// // const express = require('express')
+// // const app = express()
+// // const mongoose = require('mongoose')
+
+
+// // // importar la connection
+// // const archivoDB = require('./conexion')
+
+// // // Importar el archivo de rutas y modelo de usuario
+// // const rutasusuario = require('./rutas/usuario')
+
+// // // Importar el body-parser
+// // const bodyParser = require('body-parser')
+// // app.use(bodyParser.json())
+// // app.use(bodyParser.urlencoded({extended:'true'}))
+
+// // app.use('/api/usuario', rutasusuario)
+
+// // app.get('/', (req, res) => {
+// //     res.end('Este servidor esta corriendos')
+// // })
+
+// // // Confg el server basico
+// // app.listen(5000, function() {
+// //     console.log('Este servidor esta corriendo en el puerto 5000')
+// // })
+
+// // ==========================================================
+
+AgregarUsuario.js
+
+import React, { useState } from 'react'
+import uniquid from 'uniquid'
+import axios from 'axios'
+
+
+
+export default function AgregarUsuario() {
+  const [nombre, setNombre] = useState('')
+  const [email, setEmail] = useState('')
+  const [telefono, setTelefono] = useState('')
+
+  function funAgregar(e) {
+    e.preventDefault();
+    
+    var usuario = {
+        nombre: nombre,
+        email : email,
+        telefono: telefono,
+        idusuario: uniquid()
+    }
+    var url = '/api/usuario/agregarusuario';
+
+    fetch(url, {
+      method: 'POST', // or 'PUT'
+      body: JSON.stringify(usuario), // data can be `string` or {object}!
+      headers:{
+        'Content-Type': 'application/json'
+      }
+    }).then(res => res.json())
+    .then(response => console.log( response));
+    
+
+    console.log(usuario)
+
+    // con fetch
+ 
+    // axios.post('/api/usuario/agregarusuario', usuario)
+    // .then(res => res.json())
+    // .then(data => console.log(data))
+
+    setNombre('')
+    setEmail('')
+    setTelefono('')
+  }
+
+  return (
+    <div className='container'>
+      <div className='row'>
+          <h2 className='mt-4'>Crear nuevo user</h2>
+      </div>
+      <div className='row'>
+        <div className='col-sm-6 offset-3'>
+          <div className='mb-3'>
+            <label htmlFor="nombre" className='form-label'>Nombre </label>
+            <input type="text" className='form-control' value={nombre} onChange={(e) => {setNombre(e.target.value)}}></input>
+          </div>
+          <div className='mb-3'>
+            <label htmlFor="email" className='form-label'>Email </label>
+            <input type="email" className='form-control' value={email} onChange={(e) => {setEmail(e.target.value)}}></input>
+          </div>
+          <div className='mb-3'>
+            <label htmlFor="telefono" className='form-label'>Telefono </label>
+            <input type="text" className='form-control' value={telefono} onChange={(e) => {setTelefono(e.target.value)}}></input>
+          </div>
+          <button onClick={funAgregar} className='btn btn-success '>Guardar</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+
+////////////////////////////////////
+
+usuario.js
+
+const express = require('express')
+const router = express.Router()
+
+// const mongoose = require('mongoose')
+const mongoose = require('mongoose')
+const eschema = mongoose.Schema
+
+const eschemausuario = new eschema({
+    nombre: String,
+    email: String,
+    telefono: String,
+    idusuario: String
+})
+
+
+const ModeloUsuario = mongoose.model('usuarios', eschemausuario)
+module.exports = router
+
+
+// Esto es una ruta de ejemplo
+router.get('/ejemplo', (req, res)=>{
+    res.end('Aqui desde rutas usuario')
+}) 
+
+
+
+router.post('/agregarusuario', (req, res) => {
+    const nuevousuario = new ModeloUsuario({
+        nombre: req.body.nombre,
+        email: req.body.email,
+        telefono: req.body.telefono,
+        idusuario: req.body.idusuario
+    })
+    nuevousuario.save()
+    if(nuevousuario){
+        console.log('User created')
+    }
+})
+////////////////////////////////
