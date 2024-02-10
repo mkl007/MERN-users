@@ -9,10 +9,8 @@ on:
 
 jobs:
   hello_world:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
       - name: Echo message
         run: | 
           echo "Hola Mundo!"
