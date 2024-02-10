@@ -18,7 +18,7 @@ app.use(bodyParser.urlencoded({extended:'true'}))
 app.use('/api/usuario', rutasusuario)
 
 app.get('/', (req, res) => {
-    res.end('Este servidor esta corriendos')
+    res.end('Este servidor esta corriendo')
 })
 
 // Confg el server basico
